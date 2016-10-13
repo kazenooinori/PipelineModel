@@ -1,7 +1,12 @@
 # PipelineModel
 ## Execution
-``pip install -r requirements.txt``
 
+* environment preparation
+
+    ```
+    pip install -r requirements.txt
+    ```
+    
 1. generate training data
 
     ```
