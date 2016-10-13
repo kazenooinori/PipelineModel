@@ -1,0 +1,10 @@
+﻿select t.dt, t.params, weight_var.tagname, weight_var.value from 
+ (
+   SELECT dt, string_agg(concat(tagname, ';', value), ';') as params
+   FROM process_var
+   GROUP BY dt
+  ) t,
+  weight_var 
+  where t.dt = weight_var.dt
+  order by weight_var.dt  
+  limit 100000;
