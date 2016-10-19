@@ -12,18 +12,31 @@ from sklearn import cross_validation
 import logging
 logging.basicConfig()
 
-def train_lr_model(train_data, train_target, test_data, test_target):
+def train_lr_model(data, target):
+
+	print("[Linear Regression]")
+	loo = cross_validation.LeaveOneOut(len(target))
+	regr = linear_model.LinearRegression()
+	scores = cross_validation.cross_val_score(regr, data, target, scoring='neg_mean_squared_error', cv=loo,)
+
+	# This will print the mean of the list of errors that were output and 
+	# provide your metric for evaluation
+	print("mean of score: %.2f" % scores.mean())
+	print("===========================\n")
+
+	print("[2]")
+	train_data, test_data = data[0::2], data[1::2]
+	train_target, test_target = target[0::2], target[1::2]
 
 	regr = linear_model.LinearRegression()
 	regr.fit(train_data, train_target)
 
-	print("[Linear Regression]")
 	# coefficient
-	# print(regr.coef_)
+	print(regr.coef_)
+
 	# Validation:
 	# Explained variance score: 1 is perfect prediction
 	print('Variance score: %.2f' % regr.score(test_data, test_target))
-	print("==============================\n")
 
 def train_svr_model(data, target):
 	print("[SVR]")
@@ -91,14 +104,19 @@ def main():
 	# model
 	print("*** model training ***", file=sys.stderr)
 	print("total data size: " + str(len(data)), file=sys.stderr)
-	#train_lr_model(train_data, train_target, test_data, test_target)
-	train_svr_model(data, target)
-	#train_sknn_regressor(train_data, train_target, test_data, test_target)
+
+	if sys.argv[3] == 'linear':
+		train_lr_model(data, target)
+	elif sys.argv[3] == 'svr':
+		train_svr_model(data, target)
+	elif sys.argv[3] == 'nn':
+		train_sknn_regressor(train_data, train_target, test_data, test_target)
+	else:
+		print("No model assigned")
+
 	elasped_time = time.time() - start
 	print("elasped time: " + str(elasped_time))
 
 if __name__	== '__main__':
-	#for _ in xrange(2, 41):
-		#main(_)
 	main()
 
